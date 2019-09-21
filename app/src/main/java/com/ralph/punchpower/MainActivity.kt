@@ -9,6 +9,8 @@ import android.hardware.SensorManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.animation.AnimationUtils
+import android.view.animation.AnimationUtils.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -86,6 +88,8 @@ class MainActivity : AppCompatActivity() {
         // 센서의 변화값을 처리할 리스너를 등록한다.
         // TYPE_LINEAR_ACCELERATION은 중력값을 제외하고 X, Y, Z 축에 측정된 가속도만 계산되어 나온다.
         sensorManager.registerListener(eventListener, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_NORMAL)
+
+        imageView.startAnimation(AnimationUtils.loadAnimation(this@MainActivity, R.anim.tran))
     }
 
     // 화면이 최초 생성될 때 호출
