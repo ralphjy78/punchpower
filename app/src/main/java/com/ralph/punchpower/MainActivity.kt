@@ -1,14 +1,18 @@
 package com.ralph.punchpower
 
+import android.animation.Animator
+import android.animation.AnimatorInflater
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.AnimationUtils.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -51,6 +55,9 @@ class MainActivity : AppCompatActivity() {
 
                 // 측정이 시작된 경우
                 if(isStart) {
+                    // 애니메이션 중지
+                    imageView.clearAnimation()
+
                     // 5초간 최대값을 측정. 현재 측정된 값이 지금까지 측정된 최대값보다 크면 최대값을 현재 값으로 변경
                     if(maxPower < power)
                         maxPower = power
@@ -89,7 +96,42 @@ class MainActivity : AppCompatActivity() {
         // TYPE_LINEAR_ACCELERATION은 중력값을 제외하고 X, Y, Z 축에 측정된 가속도만 계산되어 나온다.
         sensorManager.registerListener(eventListener, sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION), SensorManager.SENSOR_DELAY_NORMAL)
 
-        imageView.startAnimation(AnimationUtils.loadAnimation(this@MainActivity, R.anim.tran))
+        // 애니메이션 시작
+        //imageView.startAnimation(AnimationUtils.loadAnimation(this@MainActivity, R.anim.tran))
+        //imageView.startAnimation(AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate))
+//        val ani = AnimationUtils.loadAnimation(this@MainActivity, R.anim.alpha_scale)
+//        imageView.startAnimation(ani)
+//
+//        // 애니메이션 리스너 설정
+//        ani.setAnimationListener(object: Animation.AnimationListener {
+//            override fun onAnimationRepeat(animation: Animation?) {
+//                // 애니메이션이 반복될 때의 처리
+//            }
+//
+//            override fun onAnimationEnd(animation: Animation?) {
+//                // 애니메이션이 종료될 때의 처리
+//            }
+//
+//            override fun onAnimationStart(animation: Animation?) {
+//                // 애니메이션이 시작될 때의 처리
+//            }
+//        })
+
+        // 속성 애니메이션을 볼러옴. apply 함수를 사용하면 로딩된 Animator가 this로 지정됨
+        AnimatorInflater.loadAnimator(this@MainActivity, R.animator.property_animation).apply {
+            // 애니메이션 종료 리스너를 추가
+            addListener(object: AnimatorListenerAdapter() {
+                // 애니메이션 종료될 때 애니메이션을 다시 시작
+                override fun onAnimationEnd(aniation: Animator?) {
+                    start()
+                }
+            })
+            // 속성 애니메이션 타겟을 글로브 이미지뷰로 지정
+            setTarget(imageView)
+
+            // 애니메이션 시작
+            start()
+        }
     }
 
     // 화면이 최초 생성될 때 호출
