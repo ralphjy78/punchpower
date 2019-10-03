@@ -1,8 +1,6 @@
 package com.ralph.punchpower
 
-import android.animation.Animator
-import android.animation.AnimatorInflater
-import android.animation.AnimatorListenerAdapter
+import android.animation.*
 import android.content.Context
 import android.content.Intent
 import android.hardware.Sensor
@@ -131,6 +129,20 @@ class MainActivity : AppCompatActivity() {
 
             // 애니메이션 시작
             start()
+        }
+
+        AnimatorInflater.loadAnimator(this@MainActivity, R.animator.color_anim).apply {
+            // 컬러 애니메이션을 불러오고 ObjectAnimator 클래스로 캐스팅
+            val colorAnimator = this@apply as? ObjectAnimator
+            // colorAnimator가 ObjectAnimator인 경우에만 실행
+            colorAnimator?.apply {
+                // Evaluator를 ArgbEvaluator()로 설정
+                setEvaluator(ArgbEvaluator())
+                // 타겟을 액티비티의 컨텐트 뷰로 지정
+                target = window.decorView.findViewById(android.R.id.content)
+                // 애니메이션 시작
+                start()
+            }
         }
     }
 
